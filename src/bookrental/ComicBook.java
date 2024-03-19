@@ -67,9 +67,9 @@ public class ComicBook {
      * @param bookRentalPrice
      * @throws Exception
      */
-    public void setBookRentalPrice(double bookRentalPrice) throws Exception {
+    public void setBookRentalPrice(double bookRentalPrice) throws BookException {
         if (bookRentalPrice < 0) {
-            throw new Exception("Rental price cannot be negative!");
+            throw new BookException("Rental price cannot be negative!");
         }
         this.bookRentalPrice = bookRentalPrice;
     }

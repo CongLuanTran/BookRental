@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package bookrental;
 
@@ -9,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -78,10 +78,7 @@ public class TextUI {
         }
     }
 
-    /**
-     *
-     */
-    public void deleteBook() {
+    private void deleteBook() {
         print(store.allBooks());
         System.out.print("Which book do you want to delete? ");
         int id = Integer.parseInt(sc.nextLine());
@@ -136,11 +133,8 @@ public class TextUI {
                 String author = cb.getAuthor();
                 String price = String.format("%.2f", cb.getBookRentalPrice());
 
-                String format = "#1. " + id + "\n"
-                        + "#2. " + title + "\n"
-                        + "#3. " + price + "\n"
-                        + "#4. " + author + "\n"
-                        + "#5. " + volume + "\n";
+                String format = "#1. " + id + "\n" + "#2. " + title + "\n" + "#3. " + price + "\n"
+                        + "#4. " + author + "\n" + "#5. " + volume + "\n";
 
                 fw.write(format);
             }
@@ -202,6 +196,12 @@ public class TextUI {
         query = sc.nextLine();
 
         List<ComicBook> result = store.search(query);
+
+        if (result.size() == 0) {
+            System.out.println("No matched result!");
+            return;
+        }
+
         print(result);
     }
 
@@ -211,26 +211,50 @@ public class TextUI {
         name = sc.nextLine();
 
         List<ComicBook> result = store.searchByAuthor(name);
+
+        if (result.size() == 0) {
+            System.out.println("Author not found!");
+            return;
+        }
+
         print(result);
     }
 
     private void changePrice() {
         int id;
-        System.out.print("Enter the id of the book: ");
-        id = Integer.parseInt(sc.nextLine());
+        ComicBook cb;
+        print(store.allBooks());
 
-        ComicBook cb = store.getBook(id);
         while (true) {
-            try {
-                double price;
-                System.out.print("Enter a new price (or 0 to return): ");
-                price = Double.parseDouble(sc.nextLine());
+            System.out.print("Enter the id of the book: ");
+            id = Integer.parseInt(sc.nextLine());
 
-                if (price == 0) {
-                    return;
-                }
+            if (id == 0) {
+                return;
+            }
+
+            try {
+                cb = store.getBook(id);
+                break;
+            } catch (StoreException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        while (true) {
+            double price;
+            System.out.print("Enter a new price (or 0 to return): ");
+            price = Double.parseDouble(sc.nextLine());
+
+            if (price == 0) {
+                return;
+            }
+
+            try {
 
                 cb.setBookRentalPrice(price);
+                System.out.println("Changed book: ");
+                print(cb);
                 break;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -239,22 +263,29 @@ public class TextUI {
     }
 
     private void print(List<ComicBook> books) {
-        System.out
-                .println("+------+------------------------------------------+--------+----------------------+-------+");
-        System.out
-                .println("|  ID  | Book                                     | Volume | Author               | Price |");
-        System.out
-                .println("+------+------------------------------------------+--------+----------------------+-------+");
+        System.out.println(
+                String.format("+%1$06d+%1$042d+%1$08d+%1$022d+%1$07d+", 0).replace("0", "-"));
+        System.out.println(
+                "|  ID  | Book                                     | Volume | Author               | Price |");
+        System.out.println(
+                "+------+------------------------------------------+--------+----------------------+-------+");
         for (ComicBook cb : books) {
             String id = String.format("%04d", cb.getId());
             String title = String.format("%-40.40s", cb.getTitle());
             String volume = String.format("%6d", cb.getVolume());
             String author = String.format("%-20.20s", cb.getAuthor());
-            String price = String.format("%5.2f", cb.getBookRentalPrice());
+            String price = String.format("%5s", cb.getBookRentalPrice() + "");
 
-            System.out.println("| " + id + " | " + title + " | " + volume + " | " + author + " | " + price + " |");
+            System.out.println("| " + id + " | " + title + " | " + volume + " | " + author + " | "
+                    + price + " |");
         }
-        System.out
-                .println("+------+------------------------------------------+--------+----------------------+-------+");
+        System.out.println(
+                "+------+------------------------------------------+--------+----------------------+-------+");
+    }
+
+    private void print(ComicBook book) {
+        List<ComicBook> singleBook = new ArrayList<>();
+        singleBook.add(book);
+        print(singleBook);
     }
 }
