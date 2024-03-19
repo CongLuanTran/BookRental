@@ -16,6 +16,15 @@ public class ComicBook {
     private String author;
     private int volume;
 
+    /**
+     * creating comic book, id uniqueness will be handled in the store
+     * 
+     * @param id
+     * @param title
+     * @param bookRentalPrice
+     * @param author
+     * @param volume
+     */
     public ComicBook(int id, String title, double bookRentalPrice, String author, int volume) {
         this.id = id;
         this.title = title;
@@ -24,18 +33,40 @@ public class ComicBook {
         this.volume = volume;
     }
 
+    /**
+     * return book's id
+     * 
+     * @return int
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * return book's title
+     * 
+     * @return String
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * return book's price
+     * 
+     * @return double
+     */
     public double getBookRentalPrice() {
         return bookRentalPrice;
     }
 
+    /**
+     * set book's price
+     * throws exception if it is negative
+     * 
+     * @param bookRentalPrice
+     * @throws Exception
+     */
     public void setBookRentalPrice(double bookRentalPrice) throws Exception {
         if (bookRentalPrice < 0) {
             throw new Exception("Rental price cannot be negative!");
@@ -43,10 +74,20 @@ public class ComicBook {
         this.bookRentalPrice = bookRentalPrice;
     }
 
+    /**
+     * return book's author
+     * 
+     * @return String
+     */
     public String getAuthor() {
         return author;
     }
 
+    /**
+     * return book's volume
+     * 
+     * @return int
+     */
     public int getVolume() {
         return volume;
     }

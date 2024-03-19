@@ -27,12 +27,21 @@ public class TextUI {
 
     private String filePath;
 
+    /**
+     *
+     * @param store
+     * @param sc
+     * @param filePath
+     */
     public TextUI(ComicBookStore store, Scanner sc, String filePath) {
         this.store = store;
         this.sc = sc;
         this.filePath = filePath;
     }
 
+    /**
+     *
+     */
     public void start() {
         System.out.println("Loading book store database ...");
         loadStore(filePath);
@@ -69,6 +78,9 @@ public class TextUI {
         }
     }
 
+    /**
+     *
+     */
     public void deleteBook() {
         print(store.allBooks());
         System.out.print("Which book do you want to delete? ");
