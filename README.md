@@ -10,3 +10,16 @@ This application can:
 5. Remove a book from the database
 
 When the user exit the application, all books that still remain in the store will be saved back to the text file.
+
+==========================================================================
+TODO:
+1. Bắt lỗi:
+   + input sai định dạng
+   + tràn số
+3. Tạo thêm Exception cho các trường hợp
+   + Giá thuê âm
+   + Số lượng sách quá giới hạn 9999 cuốn
+   + Lỗi file
+4. Thêm các câu báo lỗi
+5. Thử giải quyết các trường hợp tên sách hoặc tên tác giả cực dài
+   
