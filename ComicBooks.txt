@@ -1,4 +1,4 @@
-3
+6
 #1. 2774
 #2. The Bible
 #3. 1.00
@@ -14,3 +14,18 @@
 #3. 3.80
 #4. Socrates
 #5. 3
+#1. 6645
+#2. Lord of The Rings
+#3. 4.50
+#4. J.R.R. Tolkien
+#5. 1
+#1. 0214
+#2. James Bond
+#3. 2.00
+#4. John Kingston
+#5. 3
+#1. 4063
+#2. Atlas of Asia
+#3. 9.00
+#4. Alexandre Hamilton
+#5. 1
