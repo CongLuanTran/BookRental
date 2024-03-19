@@ -71,12 +71,12 @@ public class ComicBookStore {
      * @param price
      * @param author
      * @param volume
-     * @throws Exception
+     * @throws StoreException
      */
     public void addBook(int id, String title, double price, String author, int volume)
-            throws Exception {
+            throws StoreException {
         if (bookList.size() >= 9999) {
-            throw new Exception("The capacity of the bookstore cannot exceed 9999 books!");
+            throw new StoreException("The capacity of the bookstore cannot exceed 9999 books!");
         }
 
         if (usedID.contains(id)) {
@@ -96,9 +96,9 @@ public class ComicBookStore {
      * @param price
      * @param author
      * @param volume
-     * @throws Exception
+     * @throws StoreException
      */
-    public void addBook(String title, double price, String author, int volume) throws Exception {
+    public void addBook(String title, double price, String author, int volume) throws StoreException {
         addBook(simplerIDGenerator(title, author, volume), title, price, author, volume);
     }
 
@@ -106,18 +106,12 @@ public class ComicBookStore {
      * remove book from the list, also remove its id from usedID
      * 
      * @param id
-     * @throws Exception
+     * @throws StoreException
      */
-    public void removeBook(int id) throws Exception {
-        for (ComicBook cb : bookList) {
-            if (cb.getId() == id) {
-                usedID.remove(cb.getId());
-                bookList.remove(cb);
-                return;
-            }
-        }
-
-        throw new Exception("No book with this ID!");
+    public void removeBook(int id) throws StoreException {
+        ComicBook cb = getBook(id);
+        usedID.remove(cb.getId());
+        bookList.remove(cb);
     }
 
     /**
@@ -169,16 +163,16 @@ public class ComicBookStore {
      * Return the comic book with the specified id or null if that id doesn't exist.
      *
      * @param id
-     * @return ComicBook or null
+     * @return ComicBook
      */
-    public ComicBook getBook(int id) {
+    public ComicBook getBook(int id) throws StoreException {
         for (ComicBook cb : bookList) {
             if (cb.getId() == id) {
                 return cb;
             }
         }
 
-        return null;
+        throw new StoreException("Book not found!");
     }
 
     /**
