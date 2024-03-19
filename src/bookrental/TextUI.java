@@ -8,6 +8,7 @@ package bookrental;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,20 +18,14 @@ import java.util.Scanner;
  */
 public class TextUI {
 
+    private static String strip(String string) {
+        return string.substring(4);
+    }
+
     private ComicBookStore store;
     private Scanner sc;
+
     private String filePath;
-
-    public static void main(String[] args) {
-        ComicBookStore store = new ComicBookStore();
-        Scanner sc = new Scanner(System.in);
-        String filePath = "ComicBooks.txt";
-
-        TextUI ui = new TextUI(store, sc, filePath);
-        ui.loadStore(filePath);
-        ui.print(store.allBooks());
-        ui.addBook();
-    }
 
     public TextUI(ComicBookStore store, Scanner sc, String filePath) {
         this.store = store;
@@ -38,18 +33,10 @@ public class TextUI {
         this.filePath = filePath;
     }
 
-    public void menu() {
-        System.out.println("          COMIC RENTAL SHOP");
-        System.out.println("1. Add new comic book.\n"
-                           + "2. Search book by title.\n"
-                           + "3. Search book of an author.\n"
-                           + "4. Update book rental price.\n"
-                           + "5. Delete comic book.\n"
-                           + "6. Quit.");
-        System.out.print("     Please select a function: ");
-    }
-
     public void start() {
+        System.out.println("Loading book store database ...");
+        loadStore(filePath);
+        System.out.println("Finish loading database!");
         while (true) {
             menu();
             String choice = sc.nextLine();
@@ -71,6 +58,9 @@ public class TextUI {
                     deleteBook();
                     break;
                 case "6":
+                    System.out.println("Saving database ...");
+                    saveStore(filePath);
+                    System.out.println("Finish saving database");
                     System.out.println("Thank you, and goodbye!");
                     return;
                 default:
@@ -79,38 +69,70 @@ public class TextUI {
         }
     }
 
-    private void loadStore(String file) {
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            int count = Integer.parseInt(br.readLine());
+    public void deleteBook() {
+        print(store.allBooks());
+        System.out.print("Which book do you want to delete? ");
+        int id = Integer.parseInt(sc.nextLine());
 
-            for (int i = 0; i < count; i++) {
-                String title = br.readLine();
-                double price = Double.parseDouble(br.readLine());
-                String author = br.readLine();
-                int volume = Integer.parseInt(br.readLine());
-                store.addBook(new ComicBook(title, price, author, volume));
-            }
-        }
-        catch (Exception e) {
+        try {
+            store.removeBook(id);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void saveStore(String file) {
-        try (FileWriter fw = new FileWriter(file)) {
+    private void menu() {
+        System.out.println("          COMIC RENTAL SHOP");
+        System.out.println("1. Add new comic book.\n"
+                + "2. Search book by title.\n"
+                + "3. Search book of an author.\n"
+                + "4. Update book rental price.\n"
+                + "5. Delete comic book.\n"
+                + "6. Quit.");
+        System.out.print("     Please select a function: ");
+    }
+
+    private void loadStore(String filePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            int count = Integer.parseInt(br.readLine());
+
+            for (int i = 0; i < count; i++) {
+                int id = Integer.parseInt(strip(br.readLine()));
+                String title = strip(br.readLine());
+                double price = Double.parseDouble(strip(br.readLine()));
+                String author = strip(br.readLine());
+                int volume = Integer.parseInt(strip(br.readLine()));
+                store.addBook(id, title, price, author, volume);
+                ;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void saveStore(String filePath) {
+        try (FileWriter fw = new FileWriter(filePath)) {
             int count = store.size();
             fw.write(count + "\n");
-            for (ComicBook book : store.allBooks()) {
-                String format = book.getId() + "\n"
-                                + book.getTitle() + "\n"
-                                + book.getBookRentalPrice() + "\n"
-                                + book.getAuthor() + "\n"
-                                + book.getVolume() + "\n";
+
+            for (ComicBook cb : store.allBooks()) {
+                String id = String.format("%04d", cb.getId());
+                String title = cb.getTitle();
+                String volume = "" + cb.getVolume();
+                String author = cb.getAuthor();
+                String price = String.format("%.2f", cb.getBookRentalPrice());
+
+                String format = "#1. " + id + "\n"
+                        + "#2. " + title + "\n"
+                        + "#3. " + price + "\n"
+                        + "#4. " + author + "\n"
+                        + "#5. " + volume + "\n";
 
                 fw.write(format);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -119,6 +141,7 @@ public class TextUI {
         String title, author;
         int volume;
         double price;
+
         while (true) {
             System.out.print("Enter book's title (or 0 to return): ");
             title = sc.nextLine().trim();
@@ -132,11 +155,12 @@ public class TextUI {
                 return;
             }
 
-            if (!store.containsBook(title, volume)) {
-                break;
+            if (store.containsBook(title, volume)) {
+                System.out.println("Book already existed!");
+                continue;
             }
 
-            System.out.println("Book already existed!");
+            break;
         }
 
         System.out.print("Enter author (or 0 to return): ");
@@ -151,11 +175,10 @@ public class TextUI {
             return;
         }
 
-        ComicBook cb = new ComicBook(title, price, author, volume);
         try {
-            store.addBook(cb);
-        }
-        catch (Exception e) {
+            store.addBook(title, price, author, volume);
+            ;
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         print(store.allBooks());
@@ -197,32 +220,21 @@ public class TextUI {
 
                 cb.setBookRentalPrice(price);
                 break;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
     }
-    
-    public void deleteBook() {
-        print(store.allBooks());
-        System.out.print("Which book do you want to delete? ");
-        int id = Integer.parseInt(sc.nextLine());
-        
-        try {
-            store.removeBook(id);
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     private void print(List<ComicBook> books) {
-        System.out.println("+-----+------------------------------------------+--------+----------------------+-------+");
-        System.out.println("| ID  | Book                                     | Volume | Author               | Price |");
-        System.out.println("+-----+------------------------------------------+--------+----------------------+-------+");
+        System.out
+                .println("+------+------------------------------------------+--------+----------------------+-------+");
+        System.out
+                .println("|  ID  | Book                                     | Volume | Author               | Price |");
+        System.out
+                .println("+------+------------------------------------------+--------+----------------------+-------+");
         for (ComicBook cb : books) {
-            String id = String.format("%03d", cb.getId());
+            String id = String.format("%04d", cb.getId());
             String title = String.format("%-40.40s", cb.getTitle());
             String volume = String.format("%6d", cb.getVolume());
             String author = String.format("%-20.20s", cb.getAuthor());
@@ -230,6 +242,7 @@ public class TextUI {
 
             System.out.println("| " + id + " | " + title + " | " + volume + " | " + author + " | " + price + " |");
         }
-        System.out.println("+-----+------------------------------------------+--------+----------------------+-------+");
+        System.out
+                .println("+------+------------------------------------------+--------+----------------------+-------+");
     }
 }

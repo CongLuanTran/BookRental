@@ -10,25 +10,19 @@ package bookrental;
  * @author tranc
  */
 public class ComicBook {
-
-    private static int nextID = 1;
     private int id;
     private String title;
     private double bookRentalPrice;
     private String author;
     private int volume;
 
-    public ComicBook(String title, double bookRentalPrice, String author, int volume) {
-        this.id = nextID;
+    public ComicBook(int id, String title, double bookRentalPrice, String author, int volume) {
+        this.id = id;
         this.title = title;
         this.bookRentalPrice = bookRentalPrice;
         this.author = author;
         this.volume = volume;
-
-        nextID++;
     }
-    
-    
 
     public int getId() {
         return id;
@@ -48,7 +42,7 @@ public class ComicBook {
         }
         this.bookRentalPrice = bookRentalPrice;
     }
-    
+
     public String getAuthor() {
         return author;
     }
@@ -57,5 +51,4 @@ public class ComicBook {
         return volume;
     }
 
-    
 }

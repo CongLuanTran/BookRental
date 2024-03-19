@@ -1,26 +1,16 @@
-5
-001
-Batman: The Killing Joke
-3.99
-Alan Moore
-1
-002
-Watchmen
-4.50
-Alan Moore
 3
-003
-Spider-Man: Kraven's Last Hunt
-2.99
-J.M. DeMatteis
-2
-004
-The Sandman
-5.25
-Neil Gaiman
-1
-005
-Saga
-6.99
-Brian K. Vaughan
-3
+#1. 2774
+#2. The Bible
+#3. 1.00
+#4. Jesus Christ
+#5. 1
+#1. 2775
+#2. The Bible
+#3. 3.00
+#4. Jesus Christ
+#5. 2
+#1. 2552
+#2. Ethics
+#3. 3.80
+#4. Socrates
+#5. 3
