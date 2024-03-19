@@ -1,0 +1,26 @@
+5
+001
+Batman: The Killing Joke
+3.99
+Alan Moore
+1
+002
+Watchmen
+4.50
+Alan Moore
+3
+003
+Spider-Man: Kraven's Last Hunt
+2.99
+J.M. DeMatteis
+2
+004
+The Sandman
+5.25
+Neil Gaiman
+1
+005
+Saga
+6.99
+Brian K. Vaughan
+3
