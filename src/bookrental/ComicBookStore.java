@@ -213,4 +213,7 @@ public class ComicBookStore {
         return false;
     }
 
+    public boolean isEmpty() {
+        return bookList.isEmpty();
+    }
 }

@@ -5,12 +5,15 @@
 package bookrental;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,36 +21,28 @@ import java.util.Scanner;
  */
 public class TextUI {
 
-    private static String strip(String string) {
-        return string.substring(4);
-    }
-
     private final ComicBookStore store;
     private final Scanner sc;
 
-    private final String filePath;
+    private final File file;
 
     /**
      *
      * @param store
      * @param sc
-     * @param filePath
+     * @param file
      */
-    public TextUI(ComicBookStore store, Scanner sc, String filePath) {
+    public TextUI(ComicBookStore store, Scanner sc, File file) {
         this.store = store;
         this.sc = sc;
-        this.filePath = filePath;
+        this.file = file;
     }
 
     /**
      *
      */
     public void start() {
-        System.out.println("Loading book store database ...");
-        loadStore(filePath);
-        System.out.println("Finish loading database!");
-        System.out.println("Number of book in the store: " + store.allBooks().size());
-        print(store.allBooks());
+        loadStore(file);
         while (true) {
             menu();
             String choice = sc.nextLine();
@@ -57,20 +52,28 @@ public class TextUI {
                     addBook();
                     break;
                 case "2":
-                    search();
-                    break;
+                    if (storeAvailable()) {
+                        search();
+                    }
+                        break;
                 case "3":
-                    searchByAuthor();
-                    break;
+                    if (storeAvailable()) {
+                        searchByAuthor();
+                    }
+                        break;
                 case "4":
-                    changePrice();
-                    break;
+                    if (storeAvailable()) {
+                        changePrice();
+                    }
+                        break;
                 case "5":
-                    deleteBook();
-                    break;
+                    if (storeAvailable()) {
+                        deleteBook();
+                    }
+                        break;
                 case "6":
                     System.out.println("Saving database ...");
-                    saveStore(filePath);
+                    saveStore(file);
                     System.out.println("Finish saving database");
                     System.out.println("Thank you, and goodbye!");
                     return;
@@ -81,12 +84,11 @@ public class TextUI {
     }
 
     private void deleteBook() {
+        int id;
         print(store.allBooks());
-        System.out.print("Which book do you want to delete? ");
-        int id = Integer.parseInt(sc.nextLine());
 
         while (true) {
-            System.out.print("Enter the id of the book (or 0 to return): ");
+            System.out.print("Which book do you want to delete? ");
             String next = sc.nextLine();
 
             if (next.equals("0")) {
@@ -118,26 +120,34 @@ public class TextUI {
         System.out.print("     Please select a function: ");
     }
 
-    private void loadStore(String filePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+    private void loadStore(File file) {
+        System.out.println("Loading book store database ...");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             int count = Integer.parseInt(br.readLine());
 
             for (int i = 0; i < count; i++) {
-                int id = Integer.parseInt(strip(br.readLine()));
-                String title = strip(br.readLine());
-                double price = Double.parseDouble(strip(br.readLine()));
-                String author = strip(br.readLine());
-                int volume = Integer.parseInt(strip(br.readLine()));
+                int id = Integer.parseInt(br.readLine());
+                String title = br.readLine();
+                double price = Double.parseDouble(br.readLine());
+                String author = br.readLine();
+                int volume = Integer.parseInt(br.readLine());
                 store.addBook(id, title, price, author, volume);
             }
+
+            System.out.println("Finish loading database!");
+            System.out.println("Number of book in the store: " + store.allBooks().size());
+            print(store.allBooks());
         }
-        catch (IOException | StoreException | BookException e) {
+        catch (StoreException | BookException e) {
             System.out.println(e.getMessage());
+        }
+        catch (IOException e) {
+            System.out.println("Cannot load database! An empty database will be used!");
         }
     }
 
-    private void saveStore(String filePath) {
-        try (FileWriter fw = new FileWriter(filePath)) {
+    private void saveStore(File file) {
+        try (FileWriter fw = new FileWriter(file)) {
             int count = store.size();
             fw.write(count + "\n");
 
@@ -329,6 +339,11 @@ public class TextUI {
         String author = "Author";
         String price = "Price";
 
+        if (books.isEmpty()) {
+            System.out.println("There is nothing to print!");
+            return;
+        }
+
         int idLength = books.stream()
                 .mapToInt(cb -> String.valueOf(cb.getId()).length())
                 .max()
@@ -406,5 +421,14 @@ public class TextUI {
         List<ComicBook> singleBook = new ArrayList<>();
         singleBook.add(book);
         print(singleBook);
+    }
+
+    private boolean storeAvailable() {
+        if (store.isEmpty()) {
+            System.out.println("There is no books in the store! Please add some books first!");
+            return false;
+        }
+
+        return true;
     }
 }
