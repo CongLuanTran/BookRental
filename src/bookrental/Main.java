@@ -1,5 +1,6 @@
 package bookrental;
 
+import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -14,9 +15,11 @@ public class Main {
      */
     public static void main(String[] args) {
         String filePath = "ComicBooks.txt";
+        File file = new File(filePath);
         ComicBookStore store = new ComicBookStore();
-        Scanner sc = new Scanner(System.in);
-        TextUI ui = new TextUI(store, sc, filePath);
-        ui.start();
+        try (Scanner sc = new Scanner(System.in)) {
+            TextUI ui = new TextUI(store, sc, file);
+            ui.start();
+        }
     }
 }
