@@ -13,13 +13,13 @@ When the user exit the application, all books that still remain in the store wil
 
 ==========================================================================
 TODO:
-1. Bắt lỗi:
-   + input sai định dạng
-   + tràn số
-3. Tạo thêm Exception cho các trường hợp
-   + Giá thuê âm
-   + Số lượng sách quá giới hạn 9999 cuốn
-   + Lỗi file
-4. Thêm các câu báo lỗi
-5. Thử giải quyết các trường hợp tên sách hoặc tên tác giả cực dài
+1. ~~Bắt lỗi:~~
+   + ~~input sai định dạng~~
+   + ~~tràn số~~
+2. ~~Tạo thêm Exception cho các trường hợp~~
+   + ~~Giá thuê âm~~
+   + ~~Số lượng sách quá giới hạn 9999 cuốn~~
+   + ~~Lỗi file~~
+3. ~~Thêm các câu báo lỗi~~
+4. ~~Thử giải quyết các trường hợp tên sách hoặc tên tác giả cực dài~~
    
