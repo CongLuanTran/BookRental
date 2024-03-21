@@ -22,10 +22,10 @@ public class TextUI {
         return string.substring(4);
     }
 
-    private ComicBookStore store;
-    private Scanner sc;
+    private final ComicBookStore store;
+    private final Scanner sc;
 
-    private String filePath;
+    private final String filePath;
 
     /**
      *
@@ -46,6 +46,7 @@ public class TextUI {
         System.out.println("Loading book store database ...");
         loadStore(filePath);
         System.out.println("Finish loading database!");
+        System.out.println("Number of book in the store: " + store.allBooks().size());
         print(store.allBooks());
         while (true) {
             menu();
@@ -84,11 +85,25 @@ public class TextUI {
         System.out.print("Which book do you want to delete? ");
         int id = Integer.parseInt(sc.nextLine());
 
-        try {
-            store.removeBook(id);
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        while (true) {
+            System.out.print("Enter the id of the book (or 0 to return): ");
+            String next = sc.nextLine();
+
+            if (next.equals("0")) {
+                return;
+            }
+
+            try {
+                id = Integer.parseInt(next);
+                store.removeBook(id);
+                return;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter only a positive integer! larger than 0");
+            }
+            catch (StoreException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
@@ -114,13 +129,9 @@ public class TextUI {
                 String author = strip(br.readLine());
                 int volume = Integer.parseInt(strip(br.readLine()));
                 store.addBook(id, title, price, author, volume);
-                ;
             }
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (Exception e) {
+        catch (IOException | StoreException | BookException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -137,8 +148,11 @@ public class TextUI {
                 String author = cb.getAuthor();
                 String price = String.format("%.2f", cb.getBookRentalPrice());
 
-                String format = "#1. " + id + "\n" + "#2. " + title + "\n" + "#3. " + price + "\n"
-                                + "#4. " + author + "\n" + "#5. " + volume + "\n";
+                String format = id + "\n"
+                                + title + "\n"
+                                + price + "\n"
+                                + author + "\n"
+                                + volume + "\n";
 
                 fw.write(format);
             }
@@ -160,10 +174,24 @@ public class TextUI {
                 return;
             }
 
-            System.out.print("Enter volume (or 0 to return): ");
-            volume = Integer.parseInt(sc.nextLine());
-            if (volume == 0) {
-                return;
+            while (true) {
+                System.out.print("Enter volume (or 0 to return): ");
+                String next = sc.nextLine();
+
+                if (next.equals("0")) {
+                    return;
+                }
+                try {
+                    volume = Integer.parseInt(next);
+                    if (volume > 0) {
+                        break;
+                    }
+
+                    System.out.println("Volume number must be an integer larger than 0!");
+                }
+                catch (NumberFormatException e) {
+                    System.out.println("Please enter only a positive integer larger than 0!");
+                }
             }
 
             if (store.containsBook(title, volume)) {
@@ -180,17 +208,31 @@ public class TextUI {
             return;
         }
 
-        System.out.print("Enter rental price (or 0 to return): ");
-        price = Double.parseDouble(sc.nextLine());
-        if (price == 0) {
-            return;
+        while (true) {
+            System.out.print("Enter rental price (or 0 to return): ");
+            String next = sc.nextLine();
+
+            if (next.equals("0")) {
+                return;
+            }
+            try {
+                price = Double.parseDouble(next);
+
+                if (price > 0.0) {
+                    break;
+                }
+
+                System.out.println("Rental price must be a positive number larger than 0!");
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter only a positive number larger than 0!");
+            }
         }
 
         try {
             store.addBook(title, price, author, volume);
-            ;
         }
-        catch (Exception e) {
+        catch (StoreException | BookException e) {
             System.out.println(e.getMessage());
         }
         print(store.allBooks());
@@ -203,7 +245,7 @@ public class TextUI {
 
         List<ComicBook> result = store.search(query);
 
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             System.out.println("No matched result!");
             return;
         }
@@ -218,7 +260,7 @@ public class TextUI {
 
         List<ComicBook> result = store.searchByAuthor(name);
 
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             System.out.println("Author not found!");
             return;
         }
@@ -232,16 +274,20 @@ public class TextUI {
         print(store.allBooks());
 
         while (true) {
-            System.out.print("Enter the id of the book: ");
-            id = Integer.parseInt(sc.nextLine());
+            System.out.print("Enter the id of the book (or 0 to return): ");
+            String next = sc.nextLine();
 
-            if (id == 0) {
+            if (next.equals("0")) {
                 return;
             }
 
             try {
+                id = Integer.parseInt(next);
                 cb = store.getBook(id);
                 break;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter only a positive integer! larger than 0");
             }
             catch (StoreException e) {
                 System.out.println(e.getMessage());
@@ -250,22 +296,27 @@ public class TextUI {
 
         while (true) {
             double price;
-            System.out.print("Enter a new price (or 0 to return): ");
-            price = Double.parseDouble(sc.nextLine());
 
-            if (price == 0) {
-                return;
-            }
+            while (true) {
+                System.out.print("Enter rental price (or 0 to return): ");
+                String next = sc.nextLine();
 
-            try {
-
-                cb.setBookRentalPrice(price);
-                System.out.println("Changed book: ");
-                print(cb);
-                break;
-            }
-            catch (Exception e) {
-                System.out.println(e.getMessage());
+                if (next.equals("0")) {
+                    return;
+                }
+                try {
+                    price = Double.parseDouble(next);
+                    cb.setBookRentalPrice(price);
+                    System.out.println("Changed book: ");
+                    print(cb);
+                    return;
+                }
+                catch (NumberFormatException e) {
+                    System.out.println("Please enter only a positive number larger than 0!");
+                }
+                catch (BookException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }

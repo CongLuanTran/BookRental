@@ -10,32 +10,42 @@ package bookrental;
  * @author tranc
  */
 public class ComicBook {
-    private int id;
-    private String title;
+
+    private final int id;
+    private final String title;
     private double bookRentalPrice;
-    private String author;
+    private final String author;
     private int volume;
 
     /**
      * creating comic book, id uniqueness will be handled in the store
-     * 
+     *
      * @param id
      * @param title
      * @param bookRentalPrice
      * @param author
      * @param volume
+     * @throws bookrental.BookException
      */
-    public ComicBook(int id, String title, double bookRentalPrice, String author, int volume) {
+    public ComicBook(int id, String title, double bookRentalPrice, String author, int volume) throws BookException {
+        if (volume <= 0) {
+            throw new BookException("Volume must be a positive number larger than 0!");
+        }
+        if (bookRentalPrice <= 0) {
+            throw new BookException("Rental price must be a positive number larger than 0!");
+        }
+
         this.id = id;
         this.title = title;
         this.bookRentalPrice = bookRentalPrice;
         this.author = author;
         this.volume = volume;
+
     }
 
     /**
      * return book's id
-     * 
+     *
      * @return int
      */
     public int getId() {
@@ -44,7 +54,7 @@ public class ComicBook {
 
     /**
      * return book's title
-     * 
+     *
      * @return String
      */
     public String getTitle() {
@@ -53,7 +63,7 @@ public class ComicBook {
 
     /**
      * return book's price
-     * 
+     *
      * @return double
      */
     public double getBookRentalPrice() {
@@ -61,22 +71,21 @@ public class ComicBook {
     }
 
     /**
-     * set book's price
-     * throws exception if it is negative
-     * 
+     * set book's price throws exception if it is negative
+     *
      * @param bookRentalPrice
-     * @throws Exception
+     * @throws bookrental.BookException
      */
     public void setBookRentalPrice(double bookRentalPrice) throws BookException {
-        if (bookRentalPrice < 0) {
-            throw new BookException("Rental price cannot be negative!");
+        if (bookRentalPrice > 0) {
+            this.bookRentalPrice = bookRentalPrice;
         }
-        this.bookRentalPrice = bookRentalPrice;
+        throw new BookException("Rental price must be a positive number larger than 0!");
     }
 
     /**
      * return book's author
-     * 
+     *
      * @return String
      */
     public String getAuthor() {
@@ -85,11 +94,10 @@ public class ComicBook {
 
     /**
      * return book's volume
-     * 
+     *
      * @return int
      */
     public int getVolume() {
         return volume;
     }
-
 }
