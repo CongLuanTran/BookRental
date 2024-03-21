@@ -46,6 +46,7 @@ public class TextUI {
         System.out.println("Loading book store database ...");
         loadStore(filePath);
         System.out.println("Finish loading database!");
+        print(store.allBooks());
         while (true) {
             menu();
             String choice = sc.nextLine();
@@ -85,7 +86,8 @@ public class TextUI {
 
         try {
             store.removeBook(id);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -93,11 +95,11 @@ public class TextUI {
     private void menu() {
         System.out.println("          COMIC RENTAL SHOP");
         System.out.println("1. Add new comic book.\n"
-                + "2. Search book by title.\n"
-                + "3. Search book of an author.\n"
-                + "4. Update book rental price.\n"
-                + "5. Delete comic book.\n"
-                + "6. Quit.");
+                           + "2. Search book by title.\n"
+                           + "3. Search book of an author.\n"
+                           + "4. Update book rental price.\n"
+                           + "5. Delete comic book.\n"
+                           + "6. Quit.");
         System.out.print("     Please select a function: ");
     }
 
@@ -114,9 +116,11 @@ public class TextUI {
                 store.addBook(id, title, price, author, volume);
                 ;
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -134,11 +138,12 @@ public class TextUI {
                 String price = String.format("%.2f", cb.getBookRentalPrice());
 
                 String format = "#1. " + id + "\n" + "#2. " + title + "\n" + "#3. " + price + "\n"
-                        + "#4. " + author + "\n" + "#5. " + volume + "\n";
+                                + "#4. " + author + "\n" + "#5. " + volume + "\n";
 
                 fw.write(format);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -184,7 +189,8 @@ public class TextUI {
         try {
             store.addBook(title, price, author, volume);
             ;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
         }
         print(store.allBooks());
@@ -236,7 +242,8 @@ public class TextUI {
             try {
                 cb = store.getBook(id);
                 break;
-            } catch (StoreException e) {
+            }
+            catch (StoreException e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -256,31 +263,92 @@ public class TextUI {
                 System.out.println("Changed book: ");
                 print(cb);
                 break;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
     private void print(List<ComicBook> books) {
-        System.out.println(
-                String.format("+%1$06d+%1$042d+%1$08d+%1$022d+%1$07d+", 0).replace("0", "-"));
-        System.out.println(
-                "|  ID  | Book                                     | Volume | Author               | Price |");
-        System.out.println(
-                "+------+------------------------------------------+--------+----------------------+-------+");
+
+        String id = "ID";
+        String title = "Title";
+        String volume = "Volume";
+        String author = "Author";
+        String price = "Price";
+
+        int idLength = books.stream()
+                .mapToInt(cb -> String.valueOf(cb.getId()).length())
+                .max()
+                .getAsInt();
+        idLength = (idLength > id.length()) ? idLength : id.length();
+
+        int titleLength = books.stream()
+                .mapToInt(cb -> cb.getTitle().length())
+                .max()
+                .getAsInt();
+        titleLength = (titleLength > title.length()) ? titleLength : title.length();
+
+        int volumeLength = books.stream()
+                .mapToInt(cb -> String.valueOf(cb.getVolume()).length())
+                .max()
+                .getAsInt();
+        volumeLength = (volumeLength > volume.length()) ? volumeLength : volume.length();
+
+        int authorLength = books.stream()
+                .mapToInt(cb -> cb.getAuthor().length())
+                .max()
+                .getAsInt();
+        authorLength = (authorLength > author.length()) ? authorLength : author.length();
+
+        int priceLength = books.stream()
+                .mapToInt(cb -> String.valueOf(cb.getBookRentalPrice()).length())
+                .max()
+                .getAsInt();
+        priceLength = (priceLength > price.length()) ? priceLength : price.length();
+
+        System.out.println("+-" + repeat(idLength, "-")
+                           + "-+-" + repeat(titleLength, "-")
+                           + "-+-" + repeat(volumeLength, "-")
+                           + "-+-" + repeat(authorLength, "-")
+                           + "-+-" + repeat(priceLength, "-") + "-+");
+
+        id = String.format("%-" + idLength + "s", id);
+        title = String.format("%-" + titleLength + "s", title);
+        volume = String.format("%" + volumeLength + "s", volume);
+        author = String.format("%-" + authorLength + "s", author);
+        price = String.format("%-" + priceLength + "s", price);
+
+        System.out.println("| " + id + " | " + title + " | " + volume + " | " + author + " | "
+                           + price + " |");
+
+        System.out.println("+-" + repeat(idLength, "-")
+                           + "-+-" + repeat(titleLength, "-")
+                           + "-+-" + repeat(volumeLength, "-")
+                           + "-+-" + repeat(authorLength, "-")
+                           + "-+-" + repeat(priceLength, "-") + "-+");
+
         for (ComicBook cb : books) {
-            String id = String.format("%04d", cb.getId());
-            String title = String.format("%-40.40s", cb.getTitle());
-            String volume = String.format("%6d", cb.getVolume());
-            String author = String.format("%-20.20s", cb.getAuthor());
-            String price = String.format("%5s", cb.getBookRentalPrice() + "");
+            id = String.format("%" + idLength + "s", String.format("%0" + idLength + "d", cb.getId()));
+            title = String.format("%-" + titleLength + "s", cb.getTitle());
+            volume = String.format("%" + volumeLength + "s", String.valueOf(cb.getVolume()));
+            author = String.format("%-" + authorLength + "s", cb.getAuthor());
+            price = String.format("%" + priceLength + "s", String.valueOf(cb.getBookRentalPrice()));
 
             System.out.println("| " + id + " | " + title + " | " + volume + " | " + author + " | "
-                    + price + " |");
+                               + price + " |");
         }
-        System.out.println(
-                "+------+------------------------------------------+--------+----------------------+-------+");
+
+        System.out.println("+-" + repeat(idLength, "-")
+                           + "-+-" + repeat(titleLength, "-")
+                           + "-+-" + repeat(volumeLength, "-")
+                           + "-+-" + repeat(authorLength, "-")
+                           + "-+-" + repeat(priceLength, "-") + "-+");
+    }
+
+    private static String repeat(int n, String s) {
+        return new String(new char[n]).replace("\0", s);
     }
 
     private void print(ComicBook book) {

@@ -8,7 +8,7 @@ public class StoreException extends Exception {
 
     @Override
     public String getMessage() {
-        return "MaxBookException: " + super.getMessage();
+        return "StoreException: " + super.getMessage();
     }
 
 }
