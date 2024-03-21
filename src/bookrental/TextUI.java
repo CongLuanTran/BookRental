@@ -53,26 +53,24 @@ public class TextUI {
                     if (storeAvailable()) {
                         search();
                     }
-                        break;
+                    break;
                 case "3":
                     if (storeAvailable()) {
                         searchByAuthor();
                     }
-                        break;
+                    break;
                 case "4":
                     if (storeAvailable()) {
                         changePrice();
                     }
-                        break;
+                    break;
                 case "5":
                     if (storeAvailable()) {
                         deleteBook();
                     }
-                        break;
+                    break;
                 case "6":
-                    System.out.println("Saving database ...");
                     saveStore(file);
-                    System.out.println("Finish saving database");
                     System.out.println("Thank you, and goodbye!");
                     return;
                 default:
@@ -145,6 +143,7 @@ public class TextUI {
     }
 
     private void saveStore(File file) {
+        System.out.println("Saving database ...");
         try (FileWriter fw = new FileWriter(file)) {
             int count = store.size();
             fw.write(count + "\n");
@@ -164,9 +163,12 @@ public class TextUI {
 
                 fw.write(format);
             }
+
+            System.out.println("Finish saving database");
+            print(store.allBooks());
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        catch (IOException e) {
+            System.out.println("Unable to write to file!");
         }
     }
 
@@ -176,11 +178,14 @@ public class TextUI {
         double price;
 
         while (true) {
-            System.out.print("Enter book's title (or 0 to return): ");
-            title = sc.nextLine().trim();
-            if (title.equals("0")) {
-                return;
+            do {
+                System.out.print("Enter book's title (or 0 to return): ");
+                title = sc.nextLine().trim();
+                if (title.equals("0")) {
+                    return;
+                }
             }
+            while (title.isEmpty());
 
             while (true) {
                 System.out.print("Enter volume (or 0 to return): ");
@@ -210,11 +215,14 @@ public class TextUI {
             break;
         }
 
-        System.out.print("Enter author (or 0 to return): ");
-        author = sc.nextLine().trim();
-        if (author.equals("0")) {
-            return;
+        do {
+            System.out.print("Enter author (or 0 to return): ");
+            author = sc.nextLine().trim();
+            if (author.equals("0")) {
+                return;
+            }
         }
+        while (author.isEmpty());
 
         while (true) {
             System.out.print("Enter rental price (or 0 to return): ");

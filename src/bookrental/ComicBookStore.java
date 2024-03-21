@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class ComicBookStore {
 
-    private static Set<Integer> usedID = new HashSet<>();
+    private static final Set<Integer> usedId = new HashSet<>();
 
     /**
      * A simple, less randomized generator for book's id. 
@@ -35,7 +35,7 @@ public class ComicBookStore {
             hash++;
         }
 
-        while (usedID.contains(hash)) {
+        while (usedId.contains(hash)) {
             hash++;
         }
 
@@ -53,7 +53,7 @@ public class ComicBookStore {
      * 
      * return hash; }
      */
-    private List<ComicBook> bookList;
+    private final List<ComicBook> bookList;
 
     /**
      * Creating a list to store books' data.
@@ -82,7 +82,7 @@ public class ComicBookStore {
             throw new StoreException("The capacity of the bookstore cannot exceed 9999 books!");
         }
 
-        if (usedID.contains(id)) {
+        if (usedId.contains(id)) {
             System.out.println("ID collision detected! Generating new ID ...");
             id = simplerIDGenerator(title, author, volume);
         }
@@ -90,7 +90,7 @@ public class ComicBookStore {
             ComicBook cb;
             cb = new ComicBook(id, title, price, author, volume);
             bookList.add(cb);
-            usedID.add(cb.getId());
+            usedId.add(cb.getId());
         }
         catch (BookException e) {
             throw e;
@@ -120,7 +120,7 @@ public class ComicBookStore {
      */
     public void removeBook(int id) throws StoreException {
         ComicBook cb = getBook(id);
-        usedID.remove(cb.getId());
+        usedId.remove(cb.getId());
         bookList.remove(cb);
     }
 
