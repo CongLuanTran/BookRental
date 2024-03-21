@@ -27,8 +27,9 @@ public class ComicBookStore {
      * @return int
      */
     private static int simplerIDGenerator(String title, String author, int volume) {
-        int hash = 7;
-        hash = 31 * hash * title.hashCode() + author.hashCode() + volume;
+        int hash = title.hashCode() % 10000;
+        hash = hash + author.hashCode() % 10000;
+        hash = hash + volume % 10000;
         hash = Math.abs(hash) % 10000;
 
         while (usedID.contains(hash)) {
@@ -199,4 +200,5 @@ public class ComicBookStore {
 
         return false;
     }
+
 }
