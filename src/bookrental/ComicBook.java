@@ -10,11 +10,11 @@ package bookrental;
  * @author tranc
  */
 public class ComicBook {
+    private final String author;
+    private double bookRentalPrice;
 
     private final int id;
     private final String title;
-    private double bookRentalPrice;
-    private final String author;
     private int volume;
 
     /**
@@ -42,24 +42,15 @@ public class ComicBook {
         this.volume = volume;
 
     }
-
     /**
-     * return book's id
-     *
-     * @return int
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * return book's title
+     * return book's author
      *
      * @return String
      */
-    public String getTitle() {
-        return title;
+    public String getAuthor() {
+        return author;
     }
+
 
     /**
      * return book's price
@@ -80,16 +71,23 @@ public class ComicBook {
         if (bookRentalPrice <= 0) {
             throw new BookException("Rental price must be a positive number larger than 0!");
         }
-            this.bookRentalPrice = bookRentalPrice;
+        this.bookRentalPrice = bookRentalPrice;
     }
-
     /**
-     * return book's author
+     * return book's id
+     *
+     * @return int
+     */
+    public int getId() {
+        return id;
+    }
+    /**
+     * return book's title
      *
      * @return String
      */
-    public String getAuthor() {
-        return author;
+    public String getTitle() {
+        return title;
     }
 
     /**

@@ -18,11 +18,12 @@ import java.util.Scanner;
  * @author tranc
  */
 public class TextUI {
-
-    private final ComicBookStore store;
-    private final Scanner sc;
-
+    private static String repeat(int n, String s) {
+        return new String(new char[n]).replace("\0", s);
+    }
     private final File file;
+    private final Scanner sc;
+    private final ComicBookStore store;
 
     /**
      *
@@ -78,100 +79,6 @@ public class TextUI {
             }
         }
     }
-
-    private void deleteBook() {
-        int id;
-        print(store.allBooks());
-
-        while (true) {
-            System.out.print("Which book do you want to delete? ");
-            String next = sc.nextLine();
-
-            if (next.equals("0")) {
-                return;
-            }
-
-            try {
-                id = Integer.parseInt(next);
-                store.removeBook(id);
-                return;
-            }
-            catch (NumberFormatException e) {
-                System.out.println("Please enter only a positive integer! larger than 0");
-            }
-            catch (StoreException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    private void menu() {
-        System.out.println("          COMIC RENTAL SHOP");
-        System.out.println("1. Add new comic book.\n"
-                           + "2. Search book by title.\n"
-                           + "3. Search book of an author.\n"
-                           + "4. Update book rental price.\n"
-                           + "5. Delete comic book.\n"
-                           + "6. Quit.");
-        System.out.print("     Please select a function: ");
-    }
-
-    private void loadStore(File file) {
-        System.out.println("Loading book store database ...");
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            int count = Integer.parseInt(br.readLine());
-
-            for (int i = 0; i < count; i++) {
-                int id = Integer.parseInt(br.readLine());
-                String title = br.readLine();
-                double price = Double.parseDouble(br.readLine());
-                String author = br.readLine();
-                int volume = Integer.parseInt(br.readLine());
-                store.addBook(id, title, price, author, volume);
-            }
-
-            System.out.println("Finish loading database!");
-            System.out.println("Number of book in the store: " + store.allBooks().size());
-            print(store.allBooks());
-        }
-        catch (StoreException | BookException e) {
-            System.out.println(e.getMessage());
-        }
-        catch (IOException e) {
-            System.out.println("Cannot load database! An empty database will be used!");
-        }
-    }
-
-    private void saveStore(File file) {
-        System.out.println("Saving database ...");
-        try (FileWriter fw = new FileWriter(file)) {
-            int count = store.size();
-            fw.write(count + "\n");
-
-            for (ComicBook cb : store.allBooks()) {
-                String id = String.format("%04d", cb.getId());
-                String title = cb.getTitle();
-                String volume = "" + cb.getVolume();
-                String author = cb.getAuthor();
-                String price = String.format("%.2f", cb.getBookRentalPrice());
-
-                String format = id + "\n"
-                                + title + "\n"
-                                + price + "\n"
-                                + author + "\n"
-                                + volume + "\n";
-
-                fw.write(format);
-            }
-
-            System.out.println("Finish saving database");
-            print(store.allBooks());
-        }
-        catch (IOException e) {
-            System.out.println("Unable to write to file!");
-        }
-    }
-
     private void addBook() {
         String title, author;
         int volume;
@@ -253,37 +160,6 @@ public class TextUI {
         }
         print(store.allBooks());
     }
-
-    private void search() {
-        String query;
-        System.out.print("Search Bar: ");
-        query = sc.nextLine();
-
-        List<ComicBook> result = store.search(query);
-
-        if (result.isEmpty()) {
-            System.out.println("No matched result!");
-            return;
-        }
-
-        print(result);
-    }
-
-    private void searchByAuthor() {
-        String name;
-        System.out.print("Author's name (enter the whole name correctly): ");
-        name = sc.nextLine();
-
-        List<ComicBook> result = store.searchByAuthor(name);
-
-        if (result.isEmpty()) {
-            System.out.println("Author not found!");
-            return;
-        }
-
-        print(result);
-    }
-
     private void changePrice() {
         int id;
         ComicBook cb;
@@ -337,8 +213,69 @@ public class TextUI {
         }
     }
 
-    private void print(List<ComicBook> books) {
+    private void deleteBook() {
+        int id;
+        print(store.allBooks());
 
+        while (true) {
+            System.out.print("Which book do you want to delete? (or 0 to return) ");
+            String next = sc.nextLine();
+
+            if (next.equals("0")) {
+                return;
+            }
+
+            try {
+                id = Integer.parseInt(next);
+                store.removeBook(id);
+                return;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter only a positive integer! larger than 0");
+            }
+            catch (StoreException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+    private void loadStore(File file) {
+        System.out.println("Loading book store database ...");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            int count = Integer.parseInt(br.readLine());
+            
+            for (int i = 0; i < count; i++) {
+                int id = Integer.parseInt(br.readLine());
+                String title = br.readLine();
+                double price = Double.parseDouble(br.readLine());
+                String author = br.readLine();
+                int volume = Integer.parseInt(br.readLine());
+                store.addBook(id, title, price, author, volume);
+            }
+            
+            System.out.println("Finish loading database!");
+            System.out.println("Number of book in the store: " + store.allBooks().size());
+            print(store.allBooks());
+        }
+        catch (StoreException | BookException e) {
+            System.out.println(e.getMessage());
+        }
+        catch (IOException e) {
+            System.out.println("Cannot load database! An empty database will be used!");
+        }
+    }
+
+    private void menu() {
+        System.out.println("          COMIC RENTAL SHOP");
+        System.out.println("1. Add new comic book.\n"
+                           + "2. Search book by title.\n"
+                           + "3. Search book of an author.\n"
+                           + "4. Update book rental price.\n"
+                           + "5. Delete comic book.\n"
+                           + "6. Quit.");
+        System.out.print("     Please select a function: ");
+    }
+    private void print(List<ComicBook> books) {
+        
         String id = "ID";
         String title = "Title";
         String volume = "Volume";
@@ -418,16 +355,73 @@ public class TextUI {
                            + "-+-" + repeat(authorLength, "-")
                            + "-+-" + repeat(priceLength, "-") + "-+");
     }
-
-    private static String repeat(int n, String s) {
-        return new String(new char[n]).replace("\0", s);
-    }
-
     private void print(ComicBook book) {
         List<ComicBook> singleBook = new ArrayList<>();
         singleBook.add(book);
         print(singleBook);
     }
+
+    private void saveStore(File file) {
+        System.out.println("Saving database ...");
+        try (FileWriter fw = new FileWriter(file)) {
+            int count = store.size();
+            fw.write(count + "\n");
+
+            for (ComicBook cb : store.allBooks()) {
+                String id = String.format("%04d", cb.getId());
+                String title = cb.getTitle();
+                String volume = "" + cb.getVolume();
+                String author = cb.getAuthor();
+                String price = String.format("%.2f", cb.getBookRentalPrice());
+
+                String format = id + "\n"
+                                + title + "\n"
+                                + price + "\n"
+                                + author + "\n"
+                                + volume + "\n";
+
+                fw.write(format);
+            }
+
+            System.out.println("Finish saving database");
+            print(store.allBooks());
+        }
+        catch (IOException e) {
+            System.out.println("Unable to write to file!");
+        }
+    }
+
+
+    private void search() {
+        String query;
+        System.out.print("Search Bar: ");
+        query = sc.nextLine();
+
+        List<ComicBook> result = store.search(query);
+
+        if (result.isEmpty()) {
+            System.out.println("No matched result!");
+            return;
+        }
+
+        print(result);
+    }
+
+    private void searchByAuthor() {
+        String name;
+        System.out.print("Author's name (enter the whole name correctly): ");
+        name = sc.nextLine();
+
+        List<ComicBook> result = store.searchByAuthor(name);
+
+        if (result.isEmpty()) {
+            System.out.println("Author not found!");
+            return;
+        }
+
+        print(result);
+    }
+
 
     private boolean storeAvailable() {
         if (store.isEmpty()) {

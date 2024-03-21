@@ -18,7 +18,7 @@ public class ComicBookStore {
     private static final Set<Integer> usedId = new HashSet<>();
 
     /**
-     * A simple, less randomized generator for book's id. 
+     * A simple, less randomized generator for book's id.
      *
      * @param title
      * @param author
@@ -112,6 +112,50 @@ public class ComicBookStore {
         addBook(simplerIDGenerator(title, author, volume), title, price, author, volume);
     }
 
+
+    /**
+     * Return all books in the list.
+     *
+     * @return List
+     */
+    public List<ComicBook> allBooks() {
+        return this.bookList;
+    }
+    /**
+     *
+     * @param title
+     * @param volume
+     * @return
+     */
+    public boolean containsBook(String title, int volume) {
+        for (ComicBook cb : bookList) {
+            if (cb.getTitle().equalsIgnoreCase(title.trim()) && cb.getVolume() == volume) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    /**
+     * Return the comic book with the specified id or null if that id doesn't
+     * exist.
+     *
+     * @param id
+     * @return ComicBook
+     * @throws bookrental.StoreException
+     */
+    public ComicBook getBook(int id) throws StoreException {
+        for (ComicBook cb : bookList) {
+            if (cb.getId() == id) {
+                return cb;
+            }
+        }
+        
+        throw new StoreException("Book not found!");
+    }
+    public boolean isEmpty() {
+        return bookList.isEmpty();
+    }
     /**
      * remove book from the list, also remove its id from usedID
      *
@@ -122,15 +166,6 @@ public class ComicBookStore {
         ComicBook cb = getBook(id);
         usedId.remove(cb.getId());
         bookList.remove(cb);
-    }
-
-    /**
-     * Return all books in the list.
-     *
-     * @return List
-     */
-    public List<ComicBook> allBooks() {
-        return this.bookList;
     }
 
     /**
@@ -169,23 +204,6 @@ public class ComicBookStore {
         return searchResult;
     }
 
-    /**
-     * Return the comic book with the specified id or null if that id doesn't
-     * exist.
-     *
-     * @param id
-     * @return ComicBook
-     * @throws bookrental.StoreException
-     */
-    public ComicBook getBook(int id) throws StoreException {
-        for (ComicBook cb : bookList) {
-            if (cb.getId() == id) {
-                return cb;
-            }
-        }
-
-        throw new StoreException("Book not found!");
-    }
 
     /**
      * Return the amount of book in the store.
@@ -196,23 +214,4 @@ public class ComicBookStore {
         return bookList.size();
     }
 
-    /**
-     *
-     * @param title
-     * @param volume
-     * @return
-     */
-    public boolean containsBook(String title, int volume) {
-        for (ComicBook cb : bookList) {
-            if (cb.getTitle().equalsIgnoreCase(title.trim()) && cb.getVolume() == volume) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isEmpty() {
-        return bookList.isEmpty();
-    }
 }
