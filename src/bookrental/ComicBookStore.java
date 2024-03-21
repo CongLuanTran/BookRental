@@ -18,13 +18,12 @@ public class ComicBookStore {
     private static Set<Integer> usedID = new HashSet<>();
 
     /**
-     * A simple, less randomized generator for book's id. Books with similar
-     * titles and authors will probably appear closer to each other.
+     * A simple, less randomized generator for book's id. 
      *
      * @param title
      * @param author
      * @param volume
-     * @return int
+     * @return A hashed representation of the book
      */
     private static int simplerIDGenerator(String title, String author, int volume) {
         int hash = title.hashCode() % 10000;
@@ -44,8 +43,7 @@ public class ComicBookStore {
     }
 
     /*
-     * Experimented a more complex hashing function. This one will produce more randomized result,
-     * items with similar names can generate very different ID
+     * Experimented a more complex hashing function. This one will produce more randomized result.
      * 
      * private static int idGenerator(String title, String author, int volume) { int hash = 7; hash
      * = 31 * hash + volume; hash = 31 * hash + title.hashCode(); hash = 31 * hash +
