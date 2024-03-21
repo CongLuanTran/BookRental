@@ -175,6 +175,7 @@ public class ComicBookStore {
      *
      * @param id
      * @return ComicBook
+     * @throws bookrental.StoreException
      */
     public ComicBook getBook(int id) throws StoreException {
         for (ComicBook cb : bookList) {

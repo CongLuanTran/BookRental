@@ -77,10 +77,10 @@ public class ComicBook {
      * @throws bookrental.BookException
      */
     public void setBookRentalPrice(double bookRentalPrice) throws BookException {
-        if (bookRentalPrice > 0) {
-            this.bookRentalPrice = bookRentalPrice;
+        if (bookRentalPrice <= 0) {
+            throw new BookException("Rental price must be a positive number larger than 0!");
         }
-        throw new BookException("Rental price must be a positive number larger than 0!");
+            this.bookRentalPrice = bookRentalPrice;
     }
 
     /**
